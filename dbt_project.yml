@@ -1,0 +1,16 @@
+name: "official_sites"
+version: "1.0.0"
+
+profile: "official_sites"
+
+model-paths: ["models"]
+macro-paths: ["shared/macros"]
+
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+models:
+  official_sites:
+    +database: official_sites
+    +materialized: table

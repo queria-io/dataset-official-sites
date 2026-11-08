@@ -1,0 +1,40 @@
+schema: main
+name: official_site
+title: 公式サイト
+description: |-
+  都道府県・市区町村・政令指定都市の区の公式サイトの URL です。1 行が 1 団体です。
+
+  - 毎月サイトを開き、ページのタイトルに団体名を含むことを確認しています。確認できた日が verified_at です
+  - 開いた URL がリダイレクトされて別の URL に移っていたら、移った先の URL に替えます。元の URL は official_site_history に残ります
+  - 開けない・タイトルが合わないときは、url と verified_at を前回のままにします。そのときの結果は checked_at・http_status・page_title で確認できます
+  - 政令指定都市の区は法人ではないので corporate_number が NULL です
+fields:
+  - name: corporate_number
+    title: 法人番号
+    description: 13 桁。houjin_bangou と結合できる。政令指定都市の区は NULL
+    annotations: { queria: { semantic: { role: entity, name: corporate_number } } }
+  - name: lg_code
+    title: 全国地方公共団体コード
+    description: 6 桁（検査数字付き）
+    annotations: { queria: { semantic: { role: entity, name: city } } }
+  - name: name
+    title: 団体名
+  - name: organization_type
+    title: 団体の種類
+    description: prefecture（都道府県）・municipality（市町村）・special_ward（東京都の特別区）・designated_city（政令指定都市）・ward（政令指定都市の区）
+  - name: prefecture_name
+    title: 都道府県名
+  - name: url
+    title: 公式サイトの URL
+  - name: verified_at
+    title: 確認日
+    description: サイトを開き、タイトルに団体名を含むことを最後に確認した日。確認できたことが無ければ NULL
+  - name: checked_at
+    title: 最終確認日
+    description: 最後にサイトを開こうとした日
+  - name: http_status
+    title: HTTP ステータス
+    description: checked_at に開いたときのステータス。接続できなかったときは NULL
+  - name: page_title
+    title: ページのタイトル
+    description: checked_at に開いたときのタイトル
