@@ -2,9 +2,12 @@ schema: main
 name: official_site_history
 title: 公式サイトの URL の変更履歴
 description: |-
-  公式サイトの URL が変わった記録です。1 行が 1 回の変更です。
+  公式サイトの URL が変わった記録と、人が記録した内容です。1 行が 1 回の変更か記録です。
 
-  - site_check の確認できた結果を日付順に並べ、到達先の URL が前回と変わった日を記録しています
+  - found: 候補の一覧から URL を見つけた
+  - moved: 前の URL からリダイレクトされて、到達先の URL が変わった
+  - manual: 人がサイトを確認して URL を記録した。以後の巡回はこの URL を開く
+  - exclude: 人が対象から外した。後から manual を記録すると対象に戻る
 fields:
   - name: corporate_number
     title: 法人番号
@@ -14,9 +17,19 @@ fields:
     annotations: { queria: { semantic: { role: entity, name: city } } }
   - name: name
     title: 名前
+  - name: event
+    title: 種類
+    description: found・moved・manual・exclude
   - name: url
+    title: URL
+    description: 変更後の URL か、人が記録した URL。exclude の行は NULL
+  - name: previous_url
     title: 変更前の URL
-  - name: next_url
-    title: 変更後の URL
-  - name: changed_at
-    title: 変更を確認した日
+  - name: recorded_by
+    title: 記録した人
+    description: manual と exclude の行だけ
+  - name: note
+    title: 備考
+    description: manual と exclude の行に、記録した理由
+  - name: recorded_at
+    title: 記録日時

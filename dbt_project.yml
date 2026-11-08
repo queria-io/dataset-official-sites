@@ -4,11 +4,15 @@ version: "1.0.0"
 profile: "official_sites"
 
 model-paths: ["models"]
-macro-paths: ["shared/macros"]
+macro-paths: ["shared/macros", "macros"]
 
 clean-targets:
   - "target"
   - "dbt_packages"
+
+# 本番の Sync が 1 回通ったら、このブロックごと消してよい
+on-run-start:
+  - "{{ drop_retired_tables() }}"
 
 models:
   official_sites:

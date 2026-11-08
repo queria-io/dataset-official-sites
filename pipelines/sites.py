@@ -71,11 +71,8 @@ KANA_SUFFIX = re.compile(r"(けん|ふ|と|どう|し|ちょう|まち|そん|�
 
 
 def keywords(row: dict) -> list[str]:
-    """タイトルに含まれていれば確認できたとする文字列。title_keyword があればそれだけ。
-    ほかは名前、名前から「市」「町」などを除いた 2 文字以上の語幹、よみがなの語幹 (3 文字以上)。
-    政令指定都市の区は「中央」「北」のように他の団体と重なるので、名前だけを使う。"""
-    if row.get("title_keyword"):
-        return [row["title_keyword"]]
+    """タイトルに含まれていれば確認できたとする文字列。名前、名前から「市」「町」などを除いた 2 文字以上の語幹、
+    よみがなの語幹 (3 文字以上)。政令指定都市の区は「中央」「北」のように他の団体と重なるので、名前だけを使う。"""
     if row.get("organization_type") == "ward":
         return [row["name"]]
     stem = SUFFIX.sub("", row["name"])
@@ -83,7 +80,8 @@ def keywords(row: dict) -> list[str]:
     return [row["name"]] + [stem] * (len(stem) >= 2) + [kana] * (len(kana) >= 3)
 
 
-def is_verified(row: dict, page: dict) -> bool:
-    """開けて、タイトルに keywords(row) のどれかを含むとき確認できたとする。表記の揺れ (ヶ・ケ、檮・梼) は同じに見る。"""
+def is_verified(row: dict, page: dict, trusted: bool = False) -> bool:
+    """開けて、タイトルに keywords(row) のどれかを含むとき確認できたとする。表記の揺れ (ヶ・ケ、檮・梼) は同じに見る。
+    trusted (人が確認した URL) なら、開けただけで確認できたとする。"""
     title = page["page_title"].translate(VARIANTS)
-    return page["http_status"] == "200" and any(k.translate(VARIANTS) in title for k in keywords(row))
+    return page["http_status"] == "200" and (trusted or any(k.translate(VARIANTS) in title for k in keywords(row)))
