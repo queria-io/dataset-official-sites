@@ -1,7 +1,7 @@
 version: 2
 
 models:
-  - name: organization
+  - name: official_site
     columns:
       - name: corporate_number
         data_tests: [unique]
@@ -23,21 +23,34 @@ models:
                   - national_agency
                   - court
                   - public_prosecutors_office
-  - name: site_check
-    columns:
-      - name: url
-        data_tests: [not_null]
-      - name: url_source
-        data_tests:
-          - accepted_values:
-              arguments:
-                values: [override, previous, candidate]
-  - name: official_site
-    columns:
       - name: url
         data_tests:
           # 地方裁判所と家庭裁判所は同じサイト
           - unique:
               config:
                 where: "organization_type <> 'court'"
+      - name: url_source
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [candidate, redirect, manual]
   - name: official_site_history
+    columns:
+      - name: event
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: [found, moved, manual, exclude]
+      - name: url
+        data_tests:
+          - not_null:
+              config:
+                where: "event <> 'exclude'"
+      - name: recorded_by
+        data_tests:
+          - not_null:
+              config:
+                where: "event in ('manual', 'exclude')"
+      - name: recorded_at
+        data_tests: [not_null]

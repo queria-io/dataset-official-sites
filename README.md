@@ -6,9 +6,8 @@
 
 | テーブル | 内容 |
 | --- | --- |
-| `main.official_site` | 今の公式サイトの URL。1 行が 1 つの団体・機関 |
-| `main.official_site_history` | URL の変更履歴。1 行が 1 回の変更 |
-| `main.site_check` | サイトを開いて確認した記録。1 行が「ある日にある URL を開いた結果」 |
+| `main.official_site` | 今の公式サイトの URL。1 行が 1 つの団体・機関。毎月の確認で上書きする |
+| `main.official_site_history` | URL の変更と、人の記録。1 行が 1 回の変更か記録 |
 
 対象は次のとおりです。
 
@@ -36,11 +35,12 @@ WHERE verified_at IS NULL OR verified_at < last_checked_at;
 
 ## 作り方
 
-`site_check` が正本です。毎月の更新（`main.py`）で次のように追記し、`official_site` と `official_site_history` は dbt がこの記録から作ります。
+毎月の巡回（`main.py`）は、公開中のバージョンの `official_site` と `official_site_history` を読み、次のように進みます。
 
-1. 対象の団体・機関を、標準地域コード（`e_stat`）と法人番号（`houjin_bangou`）から作る
-2. 開く URL を決める。`overrides.csv` に URL があればその URL、なければ前回確認できたときの到達先の URL。確認できたことが無い団体・機関は、候補の URL をすべて開く
-3. 開いた結果を `site_check` に追記する。HTTP 200 でページのタイトルに名前を含めば、確認できたとする
+1. 対象の団体・機関を、標準地域コード（`e_stat`）と法人番号（`houjin_bangou`）から作る。人が最後に対象から外した団体・機関は除く
+2. 開く URL を決める。人が最後に記録した URL があればその URL、なければ今の URL。URL が無い団体・機関は、候補の URL をすべて開く
+3. HTTP 200 でページのタイトルに名前を含めば、確認できたとする。人が記録した URL は、HTTP 200 で開ければ確認できたとする
+4. `official_site` を上書きする。確認できた到達先の URL が今の URL と違えば、`official_site_history` に 1 行追記する
 
 名前の照合では、名前のほかに「市」「町」などを除いた語幹（2 文字以上）と、よみがなの語幹（3 文字以上）も使います。「ヶ・ケ」「檮・梼」は同じ文字として扱います。政令指定都市の区は、ほかの団体と重なりやすいので名前だけで照合します。
 
@@ -52,17 +52,17 @@ URL の候補は次の一覧から取ります。
 
 ## 人が直すとき
 
-確認できない団体・機関は、上の SQL で引いて見ます。直すものがあれば `overrides.csv` に 1 行追加するプルリクエストを出します。
+確認できない団体・機関は、上の SQL で引いて見ます。サイトを確認したら、`record.py` で記録します。記録は `official_site_history` に、記録した人と理由とともに 1 行追記されます。対象は、地方公共団体なら全国地方公共団体コード、国の機関なら法人番号で指定します。
 
-| 列 | 使い方 |
-| --- | --- |
-| `corporate_number` / `lg_code` | 対象。地方公共団体は `lg_code`、国の機関は `corporate_number` |
-| `url` | 開く URL を指定する。候補が誤っているときや、候補が無いとき |
-| `title_keyword` | タイトルの照合に使う文字列。タイトルに名前を含まないサイト（「都庁総合ホームページ」など） |
-| `exclude` | 何か書くと対象から外す |
-| `note` | 直した理由 |
+```bash
+# URL を記録する。以後の巡回はこの URL を開く
+scripts/build.sh python record.py 023817 https://www.town.itayanagi.aomori.jp/ --note "候補の URL が別の町のものだった"
 
-`url` を指定した行は、毎回その URL を開きます。サイトが移ってリダイレクトされれば、到達先の URL が `official_site` に入ります。
+# 対象から外す。後から URL を記録すると戻る
+scripts/build.sh python record.py 1000011000005 --exclude --note "理由"
+```
+
+記録した人は `--by` で指定します。省くと git の `user.name` が入ります。`record.py` はサイトを巡回せず、記録を追記して `official_site` を作り直し、新しいバージョンとして公開します。
 
 ## ビルド
 
