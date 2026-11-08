@@ -1,13 +1,19 @@
 # 公式サイト
 
-都道府県・市区町村・政令指定都市の区の公式サイトの URL を持つデータセットです。毎月サイトを開いて、ページのタイトルに団体名を含むことを確認し、確認した日と URL の変更履歴を残します。法人番号と全国地方公共団体コードで、ほかのデータセットと結合できます。
+地方公共団体と国の機関の公式サイトの URL を持つデータセットです。毎月サイトを開いて、ページのタイトルに団体・機関の名前を含むことを確認し、その記録を残します。法人番号と全国地方公共団体コードで、ほかのデータセットと結合できます。
 
 ## テーブル
 
 | テーブル | 内容 |
 | --- | --- |
-| `main.official_site` | 公式サイトの URL。1 行が 1 団体 |
+| `main.official_site` | 今の公式サイトの URL。1 行が 1 つの団体・機関 |
 | `main.official_site_history` | URL の変更履歴。1 行が 1 回の変更 |
+| `main.site_check` | サイトを開いて確認した記録。1 行が「ある日にある URL を開いた結果」 |
+
+対象は次のとおりです。
+
+- 地方公共団体: 「統計に用いる標準地域コード」（総務省統計局）の都道府県・市区町村・政令指定都市の区。郡・支庁と、役場の無い北方領土の 6 村は含めません
+- 国の機関: 「法人番号公表サイト」（国税庁）の法人種別 101（国の機関）。府省庁・委員会・本部など、裁判所、検察庁です。簡易裁判所（東京簡易裁判所を除く）と検察審査会は地方裁判所のサイトの中にあるので含めません
 
 ## 使い方
 
@@ -20,37 +26,49 @@ WHERE prefecture_name = '茨城県' AND organization_type = 'municipality'
 ORDER BY lg_code;
 ```
 
-法人番号で houjin_bangou と結合する:
+確認できていない団体・機関を、最後に開いた結果と並べる:
 
 ```sql
-SELECT h.name, h.city_name, s.url
-FROM official_sites.main.official_site s
-JOIN houjin_bangou.main.mart_houjin_bangou h USING (corporate_number);
+SELECT name, url, verified_at, last_http_status, last_page_title
+FROM official_sites.main.official_site
+WHERE verified_at IS NULL OR verified_at < last_checked_at;
 ```
 
-## 確認の方法
+## 作り方
 
-`tools/check.py` が `data/official_site.csv` の URL をすべて開きます。
+`site_check` が正本です。毎月の更新（`main.py`）で次のように追記し、`official_site` と `official_site_history` は dbt がこの記録から作ります。
 
-- HTTP 200 で、ページのタイトルに団体名（`title_keyword` があればその文字列）を含めば、確認できたとして `verified_at` をその日にします
-- 確認できて、開いた URL が別の URL にリダイレクトされていれば、移った先の URL に替えます。元の URL は `data/official_site_history.csv` に残します
-- 開けない・タイトルが合わないときは、`url` と `verified_at` を前回のままにします。`checked_at`・`http_status`・`page_title` にそのときの結果を書きます
+1. 対象の団体・機関を、標準地域コード（`e_stat`）と法人番号（`houjin_bangou`）から作る
+2. 開く URL を決める。`overrides.csv` に URL があればその URL、なければ前回確認できたときの到達先の URL。確認できたことが無い団体・機関は、候補の URL をすべて開く
+3. 開いた結果を `site_check` に追記する。HTTP 200 でページのタイトルに名前を含めば、確認できたとする
 
-確認できない行は人が見て、`data/official_site.csv` を直します。タイトルに団体名を含まないサイト（「都庁総合ホームページ」など）は、`title_keyword` にタイトルに含まれる文字列を書きます。
+名前の照合では、名前のほかに「市」「町」などを除いた語幹（2 文字以上）と、よみがなの語幹（3 文字以上）も使います。「ヶ・ケ」「檮・梼」は同じ文字として扱います。政令指定都市の区は、ほかの団体と重なりやすいので名前だけで照合します。
 
-GitHub Actions の Check が毎月 1 日に `tools/check.py` を流し、変わった分をプルリクエストにします。マージすると Sync がデータセットを作り直します。
+URL の候補は次の一覧から取ります。
 
-## 作り方と注意
+- 地方公共団体と府省庁・委員会・本部など: Wikidata の公式サイト（P856）を、全国地方公共団体コード（P429）か法人番号（P3225）で引いたもの
+- 裁判所: 裁判所ウェブサイトの「各地の裁判所」
+- 検察庁: 検察庁ウェブサイトの「各検察庁の紹介」
 
-- 団体の一覧は「統計に用いる標準地域コード」（総務省統計局）の都道府県・市区町村・政令指定都市の区です。郡と支庁、役場の無い北方領土の 6 村は含めません
-- 法人番号は「法人番号公表サイト」（国税庁）の法人種別 201（地方公共団体）を、都道府県名と団体名で突き合わせて付けています。政令指定都市の区は法人ではないので NULL です
-- `verified_at` が古い行は、サイトが確認できない状態が続いています。URL が変わった可能性があります
-- サイトによっては、アクセス元によって接続を拒否します（HTTP 403・408 など）。その行は `http_status` に結果が残ります
+## 人が直すとき
+
+確認できない団体・機関は、上の SQL で引いて見ます。直すものがあれば `overrides.csv` に 1 行追加するプルリクエストを出します。
+
+| 列 | 使い方 |
+| --- | --- |
+| `corporate_number` / `lg_code` | 対象。地方公共団体は `lg_code`、国の機関は `corporate_number` |
+| `url` | 開く URL を指定する。候補が誤っているときや、候補が無いとき |
+| `title_keyword` | タイトルの照合に使う文字列。タイトルに名前を含まないサイト（「都庁総合ホームページ」など） |
+| `exclude` | 何か書くと対象から外す |
+| `note` | 直した理由 |
+
+`url` を指定した行は、毎回その URL を開きます。サイトが移ってリダイレクトされれば、到達先の URL が `official_site` に入ります。
 
 ## ビルド
 
 ```bash
 uv sync
-uv run python tools/check.py   # サイトを開いて data/ を書き換える
-scripts/build.sh               # dbt で作って fdl commit
+scripts/build.sh   # サイトを開いて確認し、dbt で作って fdl commit
 ```
+
+GitHub Actions の Sync が毎月 1 日と、main へのマージのたびに作り直します。サイトによっては、アクセス元によって接続を拒否します（HTTP 403・408 など）。その団体・機関は前回確認できた URL のまま残ります。

@@ -7,6 +7,3 @@ dependencies = [
     "dbt-core>=1.11.2",
     "dbt-duckdb>=1.10.0",
 ]
-
-[dependency-groups]
-dev = ["duckdb>=1.4"]
