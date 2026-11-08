@@ -1,0 +1,49 @@
+# この dataset.yml は fdl commit が読む（FDL の dataset.json を YAML で書いたもの）。
+# 表の説明は models/ の *.table.yml に書く。表と列の型・NULL・行数は fdl commit がカタログから埋める。
+name: official_sites
+title: 公式サイト
+description: |-
+  都道府県・市区町村・政令指定都市の区の公式サイトの URL です。毎月サイトを開いて、ページのタイトルに団体名を含むことを確認し、確認した日と URL の変更履歴を持ちます。法人番号と全国地方公共団体コードで、ほかのデータセットと結合できます。
+
+  出典：各団体の公式サイト。法人番号は「法人番号公表サイト」（国税庁）、団体の一覧は「統計に用いる標準地域コード」（総務省統計局）。Queria が作成したものです。
+keywords:
+  - 公式サイト
+  - ホームページ
+  - URL
+  - 地方公共団体
+  - 自治体
+  - 都道府県
+  - 市区町村
+  - 法人番号
+homepage: https://github.com/queria-io/dataset-official-sites
+language: ja
+
+licenses:
+  - CC-BY-4.0
+  - JP-GOV-STD-2.0
+
+sources:
+  - title: 法人番号公表サイト（国税庁）
+    path: https://www.houjin-bangou.nta.go.jp/
+  - title: 統計に用いる標準地域コード（総務省統計局）
+    path: https://www.soumu.go.jp/toukei_toukatsu/index/seido/9-5.htm
+
+contributors:
+  - title: 国税庁
+    path: https://www.nta.go.jp/
+    roles: [rightsHolder]
+  - title: 総務省統計局
+    path: https://www.stat.go.jp/
+    roles: [rightsHolder]
+
+spatial_coverage: [JP]
+update_frequency: monthly
+
+schemas:
+  - name: main
+    title: 公式サイト
+
+annotations:
+  queria:
+    themes: [government_finance]
+    cover: 🏛️

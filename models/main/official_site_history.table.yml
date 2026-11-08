@@ -1,0 +1,22 @@
+schema: main
+name: official_site_history
+title: 公式サイトの URL の変更履歴
+description: |-
+  公式サイトの URL が変わった記録です。1 行が 1 回の変更です。
+
+  - 毎月の確認で、開いた URL が別の URL にリダイレクトされ、移った先のタイトルに団体名を含んだときに記録します
+fields:
+  - name: corporate_number
+    title: 法人番号
+    annotations: { queria: { semantic: { role: entity, name: corporate_number } } }
+  - name: lg_code
+    title: 全国地方公共団体コード
+    annotations: { queria: { semantic: { role: entity, name: city } } }
+  - name: name
+    title: 団体名
+  - name: url
+    title: 変更前の URL
+  - name: next_url
+    title: 変更後の URL
+  - name: changed_at
+    title: 変更を確認した日
