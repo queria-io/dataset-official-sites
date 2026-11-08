@@ -2,12 +2,11 @@ schema: main
 name: official_site
 title: 公式サイト
 description: |-
-  都道府県・市区町村・政令指定都市の区の公式サイトの URL です。1 行が 1 団体です。
+  地方公共団体と国の機関の公式サイトの URL です。1 行が 1 つの団体・機関です。
 
-  - 毎月サイトを開き、ページのタイトルに団体名を含むことを確認しています。確認できた日が verified_at です
-  - 開いた URL がリダイレクトされて別の URL に移っていたら、移った先の URL に替えます。元の URL は official_site_history に残ります
-  - 開けない・タイトルが合わないときは、url と verified_at を前回のままにします。そのときの結果は checked_at・http_status・page_title で確認できます
-  - 政令指定都市の区は法人ではないので corporate_number が NULL です
+  - site_check の確認の記録から、最後に確認できた結果の到達先の URL を選んでいます。確認できたのは、HTTP 200 でページのタイトルに団体・機関の名前を含んだときです
+  - 確認できたことが無い団体・機関は url と verified_at が NULL です。最後に開いた結果は last_ の列で確認できます
+  - 地方裁判所と家庭裁判所は同じサイトなので、同じ URL です
 fields:
   - name: corporate_number
     title: 法人番号
@@ -15,26 +14,30 @@ fields:
     annotations: { queria: { semantic: { role: entity, name: corporate_number } } }
   - name: lg_code
     title: 全国地方公共団体コード
-    description: 6 桁（検査数字付き）
+    description: 6 桁（検査数字付き）。国の機関は NULL
     annotations: { queria: { semantic: { role: entity, name: city } } }
   - name: name
-    title: 団体名
+    title: 名前
   - name: organization_type
-    title: 団体の種類
-    description: prefecture（都道府県）・municipality（市町村）・special_ward（東京都の特別区）・designated_city（政令指定都市）・ward（政令指定都市の区）
+    title: 種類
+    description: prefecture（都道府県）・municipality（市町村）・special_ward（東京都の特別区）・designated_city（政令指定都市）・ward（政令指定都市の区）・national_agency（府省庁・委員会・本部など）・court（裁判所）・public_prosecutors_office（検察庁）
   - name: prefecture_name
     title: 都道府県名
+    description: 地方公共団体はその都道府県、国の機関は法人番号の所在地の都道府県
   - name: url
     title: 公式サイトの URL
+    description: 最後に確認できたときの到達先の URL
+  - name: url_source
+    title: URL の出どころ
+    description: candidate（候補の一覧）・previous（前回確認できた URL）・override（人が確認して指定した URL）
   - name: verified_at
     title: 確認日
-    description: サイトを開き、タイトルに団体名を含むことを最後に確認した日。確認できたことが無ければ NULL
-  - name: checked_at
+    description: url を最後に確認できた日
+  - name: last_checked_at
     title: 最終確認日
-    description: 最後にサイトを開こうとした日
-  - name: http_status
-    title: HTTP ステータス
-    description: checked_at に開いたときのステータス。接続できなかったときは NULL
-  - name: page_title
-    title: ページのタイトル
-    description: checked_at に開いたときのタイトル
+    description: 最後にサイトを開いた日
+  - name: last_http_status
+    title: 最後の HTTP ステータス
+    description: 接続できなかったときは NULL
+  - name: last_page_title
+    title: 最後のページのタイトル

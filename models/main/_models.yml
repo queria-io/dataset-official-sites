@@ -1,7 +1,7 @@
 version: 2
 
 models:
-  - name: official_site
+  - name: organization
     columns:
       - name: corporate_number
         data_tests: [unique]
@@ -14,7 +14,30 @@ models:
           - not_null
           - accepted_values:
               arguments:
-                values: [prefecture, municipality, special_ward, designated_city, ward]
+                values:
+                  - prefecture
+                  - municipality
+                  - special_ward
+                  - designated_city
+                  - ward
+                  - national_agency
+                  - court
+                  - public_prosecutors_office
+  - name: site_check
+    columns:
       - name: url
-        data_tests: [unique]
+        data_tests: [not_null]
+      - name: url_source
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [override, previous, candidate]
+  - name: official_site
+    columns:
+      - name: url
+        data_tests:
+          # 地方裁判所と家庭裁判所は同じサイト
+          - unique:
+              config:
+                where: "organization_type <> 'court'"
   - name: official_site_history

@@ -5,6 +5,9 @@ on:
     branches: [main]
     paths-ignore:
       - "*.md"
+  schedule:
+    # 毎月 1 日 09:00 JST。全サイトを開いて確認する
+    - cron: "0 0 1 * *"
   workflow_dispatch:
 
 concurrency:
