@@ -17,4 +17,10 @@ on-run-start:
 models:
   official_sites:
     +database: official_sites
-    +materialized: table
+    main:
+      raw:
+        +materialized: table
+      stg:
+        +materialized: view
+      mart:
+        +materialized: table

@@ -15,4 +15,4 @@ select
     cast(nullif(last_checked_at, '') as timestamptz) as last_checked_at,
     cast(nullif(last_http_status, '') as integer) as last_http_status,
     nullif(last_page_title, '') as last_page_title
-from read_csv('build/official_site.csv', all_varchar = true)
+from {{ ref('raw_official_site') }}

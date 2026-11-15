@@ -11,4 +11,4 @@ select
     nullif(recorded_by, '') as recorded_by,
     nullif(note, '') as note,
     cast(recorded_at as timestamptz) as recorded_at
-from read_csv('build/official_site_history.csv', all_varchar = true)
+from {{ ref('raw_official_site_history') }}
