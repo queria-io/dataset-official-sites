@@ -52,7 +52,7 @@ def connect():
     con = duckdb.connect()
     con.execute("install ducklake; load ducklake; install httpfs; load httpfs")
     for name in ("e_stat", "houjin_bangou", "official_sites"):
-        con.execute(f"attach 'ducklake:{DATA}/{name}/ducklake.duckdb' as {name} (read_only)")
+        con.execute(f"attach 'ducklake:{DATA}/{name}/metadata.db' as {name} (read_only)")
     return con
 
 
