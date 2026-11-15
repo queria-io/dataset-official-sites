@@ -1,4 +1,0 @@
-schema: main
-name: raw_official_site
-description: 法人・団体ごとの今の公式サイト（build/official_site.csv、main.py と record.py が書く）（取得したままの形）
-annotations: { queria: { published: false } }
