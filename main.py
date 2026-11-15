@@ -51,7 +51,7 @@ NO_PAGE = {"final_url": "", "http_status": "", "page_title": ""}
 def connect():
     con = duckdb.connect()
     con.execute("install ducklake; load ducklake; install httpfs; load httpfs")
-    for name in ("e_stat", "houjin_bangou", "official_sites"):
+    for name in ("soumu", "houjin_bangou", "official_sites"):
         con.execute(f"attach 'ducklake:{DATA}/{name}/metadata.db' as {name} (read_only)")
     return con
 

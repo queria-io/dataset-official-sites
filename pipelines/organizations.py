@@ -1,7 +1,7 @@
 """公式サイトを持たせる対象と、URL の候補。
 
 対象:
-- 地方公共団体: 標準地域コード (e_stat) の都道府県・市区町村・政令指定都市の区。郡・支庁と、役場の無い北方領土の 6 村は含めない。
+- 地方公共団体: 標準地域コード (soumu) の都道府県・市区町村・政令指定都市の区。郡・支庁と、役場の無い北方領土の 6 村は含めない。
   法人番号は houjin_bangou の法人種別 201 を都道府県名と団体名で突き合わせて付ける
 - 国の機関: houjin_bangou の法人種別 101。簡易裁判所（東京簡易裁判所を除く）と検察審査会は、
   地方裁判所のサイトの中にあるので含めない
@@ -38,7 +38,7 @@ with m as (
                 then 'special_ward'
             else area_kind
         end as organization_type
-    from e_stat.code.municipality
+    from soumu.code.municipality
     where area_kind in ('prefecture', 'municipality', 'designated_city', 'ward')
         -- 北方領土の 6 村は役場が無い
         and area_code not between '01695' and '01700'
@@ -87,7 +87,7 @@ SELECT ?key ?url WHERE {
 
 
 def organizations(con) -> list[dict]:
-    """con には e_stat と houjin_bangou を ATTACH しておく。"""
+    """con には soumu と houjin_bangou を ATTACH しておく。"""
     cur = con.execute(f"select * from ({LOCAL}) union all by name select * from ({NATIONAL}) order by all")
     cols = [d[0] for d in cur.description]
     return [dict(zip(cols, r)) for r in cur.fetchall()]
