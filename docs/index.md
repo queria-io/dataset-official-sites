@@ -37,7 +37,7 @@ WHERE verified_at IS NULL OR verified_at < last_checked_at;
 
 毎月の巡回（`main.py`）は、公開中のバージョンの `official_site` と `official_site_history` を読み、次のように進みます。
 
-1. 対象の団体・機関を、標準地域コード（`e_stat`）と法人番号（`houjin_bangou`）から作る。人が最後に対象から外した団体・機関は除く
+1. 対象の団体・機関を、標準地域コード（`soumu`）と法人番号（`houjin_bangou`）から作る。人が最後に対象から外した団体・機関は除く
 2. 開く URL を決める。人が最後に記録した URL があればその URL、なければ今の URL。URL が無い団体・機関は、候補の URL をすべて開く
 3. HTTP 200 でページのタイトルに名前を含めば、確認できたとする。人が記録した URL は、HTTP 200 で開ければ確認できたとする
 4. `official_site` を上書きする。確認できた到達先の URL が今の URL と違えば、`official_site_history` に 1 行追記する
