@@ -1,5 +1,4 @@
-# この dataset.yml は fdl commit が読む（FDL の dataset.json を YAML で書いたもの）。
-# 表の説明は models/ の *.table.yml に書く。表と列の型・NULL・行数は fdl commit がカタログから埋める。
+$schema: https://queria.io/schemas/dataset/v1.json
 name: official_sites
 title: 公式サイト
 description: |-
@@ -20,7 +19,6 @@ keywords:
   - 裁判所
 homepage: https://github.com/queria-io/dataset-official-sites
 language: ja
-
 licenses:
   - CC-BY-4.0
   - JP-GOV-STD-2.0
@@ -41,12 +39,9 @@ contributors:
 
 spatial_coverage: [JP]
 update_frequency: monthly
-
 schemas:
   - name: main
     title: 公式サイト
 
-annotations:
-  queria:
-    themes: [government_finance]
-    cover: 🏛️
+themes: [government_finance]
+cover: 🏛️

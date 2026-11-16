@@ -1,5 +1,6 @@
-schema: main
-name: official_site_history
+---
+$schema: https://queria.io/schemas/table/v1.json
+table: main.official_site_history
 title: 公式サイトの URL の変更履歴
 description: |-
   公式サイトの URL が変わった記録と、人が記録した内容です。1 行が 1 回の変更か記録です。
@@ -11,10 +12,10 @@ description: |-
 fields:
   - name: corporate_number
     title: 法人番号
-    annotations: { queria: { semantic: { role: entity, name: corporate_number } } }
+    semantic: {role: entity, name: corporate_number}
   - name: lg_code
     title: 全国地方公共団体コード
-    annotations: { queria: { semantic: { role: entity, name: city } } }
+    semantic: {role: entity, name: city}
   - name: name
     title: 名前
   - name: event
@@ -33,3 +34,4 @@ fields:
     description: manual と exclude の行に、記録した理由
   - name: recorded_at
     title: 記録日時
+---

@@ -1,5 +1,6 @@
-schema: main
-name: official_site
+---
+$schema: https://queria.io/schemas/table/v1.json
+table: main.official_site
 title: 公式サイト
 description: |-
   地方公共団体と国の機関の公式サイトの URL です。1 行が 1 つの団体・機関です。
@@ -13,11 +14,11 @@ fields:
   - name: corporate_number
     title: 法人番号
     description: 13 桁。houjin_bangou と結合できる。政令指定都市の区は NULL
-    annotations: { queria: { semantic: { role: entity, name: corporate_number } } }
+    semantic: {role: entity, name: corporate_number}
   - name: lg_code
     title: 全国地方公共団体コード
     description: 6 桁（検査数字付き）。国の機関は NULL
-    annotations: { queria: { semantic: { role: entity, name: city } } }
+    semantic: {role: entity, name: city}
   - name: name
     title: 名前
   - name: organization_type
@@ -49,3 +50,4 @@ fields:
     description: 接続できなかったときは NULL
   - name: last_page_title
     title: 最後のページのタイトル
+---
