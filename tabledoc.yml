@@ -27,19 +27,19 @@ licenses:
 sources:
   - id: houjin-bangou
     title: 法人番号公表サイト（国税庁）
-    path: https://www.houjin-bangou.nta.go.jp/
+    url: https://www.houjin-bangou.nta.go.jp/
   - id: 9-5
     title: 統計に用いる標準地域コード（総務省統計局）
-    path: https://www.soumu.go.jp/toukei_toukatsu/index/seido/9-5.htm
+    url: https://www.soumu.go.jp/toukei_toukatsu/index/seido/9-5.htm
 
 contributors:
   - id: nta
     title: 国税庁
-    path: https://www.nta.go.jp/
+    url: https://www.nta.go.jp/
     roles: [rightsHolder]
   - id: stat
     title: 総務省統計局
-    path: https://www.stat.go.jp/
+    url: https://www.stat.go.jp/
     roles: [rightsHolder]
 
 spatial_coverage: [JP]

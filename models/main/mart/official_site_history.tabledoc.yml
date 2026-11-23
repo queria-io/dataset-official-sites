@@ -10,10 +10,10 @@ description: |-
 columns:
   - name: corporate_number
     title: 法人番号
-    entity: {type: foreign, name: corporate_number}
+    entity: corporate_number
   - name: lg_code
     title: 全国地方公共団体コード
-    entity: {type: foreign, name: city}
+    entity: city
   - name: name
     title: 名前
   - name: event
