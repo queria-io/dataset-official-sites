@@ -46,4 +46,3 @@ update_frequency: monthly
 schemas:
   - name: main
     title: 公式サイト
-
