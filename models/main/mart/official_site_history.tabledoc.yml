@@ -1,6 +1,4 @@
----
-$schema: https://queria.io/schemas/table/v1.json
-table: main.official_site_history
+$schema: https://tabledoc.queria.io/schemas/table/v1.json
 title: 公式サイトの URL の変更履歴
 description: |-
   公式サイトの URL が変わった記録と、人が記録した内容です。1 行が 1 回の変更か記録です。
@@ -9,13 +7,13 @@ description: |-
   - moved: 前の URL からリダイレクトされて、到達先の URL が変わった
   - manual: 人がサイトを確認して URL を記録した。以後の巡回はこの URL を開く
   - exclude: 人が対象から外した。後から manual を記録すると対象に戻る
-fields:
+columns:
   - name: corporate_number
     title: 法人番号
-    semantic: {role: entity, name: corporate_number}
+    entity: {type: foreign, name: corporate_number}
   - name: lg_code
     title: 全国地方公共団体コード
-    semantic: {role: entity, name: city}
+    entity: {type: foreign, name: city}
   - name: name
     title: 名前
   - name: event
@@ -34,4 +32,3 @@ fields:
     description: manual と exclude の行に、記録した理由
   - name: recorded_at
     title: 記録日時
----
