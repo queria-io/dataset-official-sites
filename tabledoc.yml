@@ -1,11 +1,11 @@
-$schema: https://queria.io/schemas/dataset/v1.json
+$schema: https://tabledoc.queria.io/schemas/dataset/v1.json
 name: official_sites
 title: 公式サイト
 description: |-
   地方公共団体と国の機関の公式サイトの URL です。毎月サイトを開いて、ページのタイトルに団体・機関の名前を含むことを確認し、確認の記録と URL の変更履歴を持ちます。法人番号と全国地方公共団体コードで、ほかのデータセットと結合できます。
 
   出典：各団体・機関の公式サイト、裁判所ウェブサイト、検察庁ウェブサイト。法人番号は「法人番号公表サイト」（国税庁）、団体の一覧は「統計に用いる標準地域コード」（総務省統計局）。Queria が作成したものです。
-keywords:
+topics:
   - 公式サイト
   - ホームページ
   - URL
@@ -24,16 +24,20 @@ licenses:
   - JP-GOV-STD-2.0
 
 sources:
-  - title: 法人番号公表サイト（国税庁）
+  - id: houjin-bangou
+    title: 法人番号公表サイト（国税庁）
     path: https://www.houjin-bangou.nta.go.jp/
-  - title: 統計に用いる標準地域コード（総務省統計局）
+  - id: 9-5
+    title: 統計に用いる標準地域コード（総務省統計局）
     path: https://www.soumu.go.jp/toukei_toukatsu/index/seido/9-5.htm
 
 contributors:
-  - title: 国税庁
+  - id: nta
+    title: 国税庁
     path: https://www.nta.go.jp/
     roles: [rightsHolder]
-  - title: 総務省統計局
+  - id: stat
+    title: 総務省統計局
     path: https://www.stat.go.jp/
     roles: [rightsHolder]
 
@@ -42,6 +46,3 @@ update_frequency: monthly
 schemas:
   - name: main
     title: 公式サイト
-
-themes: [government_finance]
-cover: 🏛️
