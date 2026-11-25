@@ -22,6 +22,7 @@ columns:
   - name: organization_type
     title: 種類
     description: prefecture（都道府県）・municipality（市町村）・special_ward（東京都の特別区）・designated_city（政令指定都市）・ward（政令指定都市の区）・national_agency（府省庁・委員会・本部など）・court（裁判所）・public_prosecutors_office（検察庁）
+    dimension: categorical
   - name: prefecture_name
     title: 都道府県名
     description: 地方公共団体はその都道府県、国の機関は法人番号の所在地の都道府県
